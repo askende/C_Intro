@@ -165,6 +165,7 @@ void writeInFile(Player *PlayerTab, FILE* performanceFile, int players)
   int line = 0;
   char score[10] = "";
   char id_p[2] = "";
+  char won_parties[2] = "";
 
   for (line; line <= players; ++line)
   {
@@ -173,10 +174,17 @@ void writeInFile(Player *PlayerTab, FILE* performanceFile, int players)
       printf("%d %d\n", line, PlayerTab[line].id_player);
       sprintf(id_p, "%d", PlayerTab[line].id_player);
       fputs(id_p, performanceFile);
+      fputs(" ", performanceFile);
       printf("TRue id %s\n", id_p);
 
       sprintf(score, "%f", PlayerTab[line].score);
+      fputs(score, performanceFile);
+      fputs(" ", performanceFile);
       printf("score %s\n", score);
+
+      sprintf(won_parties, "%d", PlayerTab[line].wonParties);
+      fputs(won_parties, performanceFile);
+      fputs(" \n", performanceFile);
 
     }
   }
