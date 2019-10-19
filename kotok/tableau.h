@@ -1,4 +1,5 @@
-// Anisa Skenderovic
+// Anisa Skenderovic 000457599
+
 #ifndef TABLEAU_H
 #define TABLEAU_H
 
@@ -17,17 +18,19 @@ struct Player
 
 Player* initPlayerTab(int players);
 
-void delPlayerTab(Player *PlayerTab);
+void delPlayerTab(Player *PlayerTab, int *players);
 
 Player* addPlayerToTab(Player *PlayerTab, int players);
 
-int queryValues(FILE* partiesFile, Player *PlayerTab, char *line, int players);
+void delPlayersIds(char *id_player, char *id_player_two, char *score);
 
-int queryLines(FILE* partiesFile, Player *PlayerTab, int players);
+Player* queryValues(FILE* partiesFile, Player *PlayerTab, char *line, int *players);
+
+Player* queryLines(FILE* partiesFile, Player *PlayerTab, int *players);
 
 void addScore(Player *PlayerTab, float score, int id_player, int id_player_two);
 
-int addID(Player *PlayerTab, int id_player, int players);
+Player* addID(Player *PlayerTab, int id_player, int *players);
 
 void writeInFile(Player *PlayerTab, FILE* performanceFile, int players);
 

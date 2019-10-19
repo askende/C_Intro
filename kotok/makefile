@@ -1,4 +1,4 @@
-FLAGS= -masm=intel -g -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Wsign-conversion -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override
+FLAGS= -masm=intel -std=c11 -Wall -Werror -Wpedantic -g -ggdb3 -Wextra -Wconversion -Wsign-conversion -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override
 CXX=gcc
 SOURCES=kotok.c
 OUT=kotok.out
@@ -11,7 +11,7 @@ OBJTAB=tableau.o
 all: $(LIB) $(OUT)
 
 $(OUT): $(OBJ) $(SOURCES)
-		$(CXX) $(FLAG) $(SOURCES) -L. -ltableau -o $(OUT) $(OBJ)
+		$(CXX) $(FLAG) $(SOURCES) -L. -ltableau -o $(OUT) 
 
 $(OBJ) : $(SOURCES)
 		$(CXX) $(FLAG) -c $(SOURCES)

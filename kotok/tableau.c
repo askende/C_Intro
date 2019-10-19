@@ -1,4 +1,4 @@
-// Anisa Skenderovic
+// Anisa Skenderovic 000457599
 
 
 #include<stdlib.h>
@@ -20,7 +20,7 @@ Player* initPlayerTab(int players)
 }
 
 
-void delPlayerTab(Player *PlayerTab)
+void delPlayerTab(Player *PlayerTab, int *players)
 {
   free(PlayerTab);
 }
@@ -29,12 +29,20 @@ void delPlayerTab(Player *PlayerTab)
 Player* addPlayerToTab(Player *PlayerTab, int players)
 {
   PlayerTab = realloc(PlayerTab, players * sizeof(Player));
-  PlayerTab[players-1].id_player = 0;
 
   return PlayerTab;
 }
 
-int queryValues(FILE* partiesFile, Player *PlayerTab, char *line, int players)
+
+void delPlayersIds(char *id_player, char *id_player_two, char *score)
+{
+  free(id_player);
+  free(id_player_two);
+  free(score);
+}
+
+
+Player* queryValues(FILE* partiesFile, Player *PlayerTab, char *line, int *players)
 {
   int i = 0;
   int a = 0;
@@ -66,35 +74,35 @@ int queryValues(FILE* partiesFile, Player *PlayerTab, char *line, int players)
         a += 1;
         i += 1;
     }
-
-    players = addID(PlayerTab, atoi(id_player), players);
-    players = addID(PlayerTab, atoi(id_player_two), players);
+    PlayerTab = addID(PlayerTab, atoi(id_player), players);
+    PlayerTab = addID(PlayerTab, atoi(id_player_two), players);
     addScore(PlayerTab, atof(score), atoi(id_player), atoi(id_player_two));
 
-    return players;
+    delPlayersIds(id_player, id_player_two, score);
+
+
+    return PlayerTab;
 }
 
 
-int queryLines(FILE* partiesFile, Player *PlayerTab, int players)
+Player* queryLines(FILE* partiesFile, Player *PlayerTab, int *players)
 {
-
+    printf("Lecture des scores du fichier\n");
     char *line = calloc(9, sizeof(char));
 
     while (fgets(line, 9, partiesFile) != NULL && ftell(partiesFile) != EOF)
     {
-      printf("%d, %d, %d, %d, %d, %d, %d, %d, %d\n", line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8] );
-      players = queryValues(partiesFile, PlayerTab, line, players);
+      PlayerTab = queryValues(partiesFile, PlayerTab, line, players);
     }
 
-    return players;
+    free(line);
+
+    return PlayerTab;
 }
 
 
 void addScore(Player *PlayerTab, float score, int id_player, int id_player_two)
 {
-  //PlayerTab[id_player].id_player = id_player;
-  //PlayerTab[id_player_two].id_player = id_player_two;
-
 
   if (score == 0)
   {
@@ -114,30 +122,32 @@ void addScore(Player *PlayerTab, float score, int id_player, int id_player_two)
     PlayerTab[id_player_two].score += 0.5;
   }
 
-  printf("id %d\n", PlayerTab[id_player].id_player );
-  printf("id two %d\n", PlayerTab[id_player_two].id_player);
-  printf("score %f\n",PlayerTab[id_player].score );
-  printf("score 2 %f\n",PlayerTab[id_player_two].score );
 }
 
-int addID(Player *PlayerTab, int id_player, int players)
+
+Player* addID(Player *PlayerTab, int id_player, int *players)
 {
-  if (id_player < 5 && id_player != 0 && PlayerTab[id_player].id_player == 0)
+  // Assez de place dans le tableau pour cet ID
+  if (id_player < *players && id_player != 0 && PlayerTab[id_player].id_player != id_player)
   {
     PlayerTab[id_player].id_player = id_player;
   }
 
-  if (players < id_player && id_player >= 5)
+  // On doit agrandir le tableau
+  if (*players < id_player && id_player >= 5)
   {
-    players = id_player;
-    PlayerTab = addPlayerToTab(PlayerTab, players * sizeof(Player));
+    *players = id_player;
+    PlayerTab = addPlayerToTab(PlayerTab, *players);
+    PlayerTab[id_player].id_player = id_player;
   }
-  return players;
 
+  return PlayerTab;
 }
+
 
 void writeInFile(Player *PlayerTab, FILE* performanceFile, int players)
 {
+  printf("Ecriture des performances dans le fichier\n");
   int line = 0;
   char score[10] = "";
   char id_p[2] = "";
@@ -145,18 +155,16 @@ void writeInFile(Player *PlayerTab, FILE* performanceFile, int players)
 
   for (line; line <= players; ++line)
   {
+    // Valeur pertinente (pas un joueur non-existant)
     if (PlayerTab[line].id_player > 0 && PlayerTab[line].id_player <= players)
     {
-      printf("%d %d\n", line, PlayerTab[line].id_player);
       sprintf(id_p, "%d", PlayerTab[line].id_player);
       fputs(id_p, performanceFile);
       fputs(" ", performanceFile);
-      printf("TRue id %s\n", id_p);
 
       sprintf(score, "%f", PlayerTab[line].score);
       fputs(score, performanceFile);
       fputs(" ", performanceFile);
-      printf("score %s\n", score);
 
       sprintf(won_parties, "%d", PlayerTab[line].wonParties);
       fputs(won_parties, performanceFile);
