@@ -1,21 +1,26 @@
 FLAGS= -masm=intel -g -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Wsign-conversion -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override
 CXX=gcc
-MAIN=kotok.c
+SOURCES=kotok.c
 OUT=kotok.out
-KOTOK=kotok.o
+OBJ=kotok.o
+LIB=libtableau.a
+OBJTAB=tableau.o
 
 
 
-all: $(OUT)
+all: $(LIB) $(OUT)
 
-$(OUT): $(KOTOK)
-	$(CXX) $(FLAG) $(KOTOK) -o $(OUT)
+$(OUT): $(OBJ) $(SOURCES)
+		$(CXX) $(FLAG) $(SOURCES) -L. -ltableau -o $(OUT) $(OBJ)
 
-$(KOTOK) : $(MAIN)
-	$(CXX) $(FLAG) -c $(MAIN)
+$(OBJ) : $(SOURCES)
+		$(CXX) $(FLAG) -c $(SOURCES)
 
+$(LIB) : tableau.o
+		ar -rv $(LIB) $(OBJTAB)
 
-
+$(OBJTAB) : tableau.c tableau.h
+		$(CXX) $(FLAG) -c tableau.c
 
 
 .PHONY : clear
